@@ -1,0 +1,62 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum PropertyType {
+  VILLA
+  APARTMENT
+  LAND
+  COMMERCIAL
+}
+
+enum ListingStatus {
+  FOR_SALE
+  FOR_RENT
+  PROJECT
+}
+
+model Property {
+  id              String        @id @default(cuid())
+  title           String
+  slug            String        @unique
+  description     String
+  type            PropertyType
+  status          ListingStatus
+  price           Float
+  currency        String        @default("TL")
+  m2Net           Int
+  m2Gross         Int
+  roomCount       String        // Örn: "4+1", "3+1", "Arsa"
+  bathroomCount   Int           @default(1)
+  buildingAge     String        // Örn: "0 (Yeni)", "3 Yıllık"
+  floorNumber     String        // Örn: "Villa Tipi", "8. Kat"
+  city            String        // Örn: "Antalya"
+  district        String        // Örn: "Muratpaşa", "Konyaaltı", "Kepez", "Alanya"
+  address         String
+  images          String[]
+  videoUrl        String?
+  virtualTourUrl  String?
+  isFeatured      Boolean       @default(false)
+  isCitizenship   Boolean       @default(false) // Türk Vatandaşlığına Uygun
+  features        String[]      // Örn: ["Özel Havuz", "Kapalı Otopark", "Deniz Manzarası"]
+  inquiries       Inquiry[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model Inquiry {
+  id         String    @id @default(cuid())
+  propertyId String?
+  property   Property? @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  fullName   String
+  phone      String
+  email      String
+  message    String
+  status     String    @default("YENİ") // YENİ, ARANDI, RANDEVU_VERİLDİ
+  createdAt  DateTime  @default(now())
+}
