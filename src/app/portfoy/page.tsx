@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import PropertyCard from "@/components/PropertyCard";
-import { PROPERTIES, Property } from "@/lib/data";
-import { Filter, SlidersHorizontal, Search, RotateCcw, Building2 } from "lucide-react";
+import { PROPERTIES } from "@/lib/data";
+import { Filter, Search, RotateCcw, Building2 } from "lucide-react";
 
-export default function PortfoyPage() {
+function PortfoyContent() {
   const searchParams = useSearchParams();
 
   // Initial params
@@ -197,5 +197,13 @@ export default function PortfoyPage() {
 
       </div>
     </div>
+  );
+}
+
+export default function PortfoyPage() {
+  return (
+    <Suspense fallback={<div className="p-12 text-center text-xs font-bold text-emlak-navy">İlanlar yükleniyor...</div>}>
+      <PortfoyContent />
+    </Suspense>
   );
 }
